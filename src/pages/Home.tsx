@@ -1,5 +1,5 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ToDoList from '../components/Index';
+import TodoList from '../components/TodoList';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -20,7 +20,7 @@ const Home: React.FC = () => {
 					</IonToolbar>
 				</IonHeader>
 
-				<ToDoList />
+				<TodoList />
 			</IonContent>
 		</IonPage>
 	);
