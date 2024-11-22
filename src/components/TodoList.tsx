@@ -24,6 +24,12 @@ export default function ToDoList() {
     setNewItemName(e.target.value);
   };
 
+  const checkForEnterKeyPress = (e: React.KeyboardEvent<HTMLIonInputElement>) => {
+    if (e.key === "Enter") {
+      addItem();
+    }
+  };
+
   const addItem = () => {
     if (!newItemName) return;
 
@@ -53,7 +59,7 @@ export default function ToDoList() {
           placeholder="New item..."
           value={newItemName}
           onIonInput={onNewItemFieldChange}
-          onIonChange={addItem}
+          onKeyDown={checkForEnterKeyPress}
         />
 
         <IonButton onClick={addItem}>
