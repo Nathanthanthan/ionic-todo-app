@@ -1,9 +1,10 @@
 {
-  "name": "todoApp",
+  "name": "todo-app",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "start": "ionic serve",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
