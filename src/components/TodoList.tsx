@@ -2,17 +2,21 @@ import { InputInputEventDetail, IonInputCustomEvent, ItemReorderEventDetail } fr
 import {
   IonButton,
   IonContent,
+  IonHeader,
   IonIcon,
-  IonInput,
   IonList,
+  IonPage,
   IonReorderGroup,
+  IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import { useState } from "react";
 
-import TodoItem, { TTodoItem } from "./TodoItem";
 import { add } from "ionicons/icons";
+import { RouteComponentProps } from "react-router";
+import TodoItem, { TTodoItem } from "./TodoItem";
 
-export default function ToDoList() {
+export default function ToDoList({ match, history }: RouteComponentProps) {
   const [currentId, setCurrentId] = useState<number>(0);
   const [newItemName, setNewItemName] = useState<string | null>(null);
 
@@ -53,47 +57,55 @@ export default function ToDoList() {
   }
 
   return (
-    <IonContent className="ion-padding">
-      <div className="flex justify-end pb-2">
-        {/* <IonInput
-          placeholder="New item..."
-          value={newItemName}
-          onIonInput={onNewItemFieldChange}
-          onKeyDown={checkForEnterKeyPress}
-        /> */}
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Todo list</IonTitle>
+        </IonToolbar>
+      </IonHeader>
 
-        <IonButton onClick={addItem}>
-          <span className="flex items-center gap-1">
-            <IonIcon
-              icon={add}
-              className="text-lg"
-            />
+      <IonContent fullscreen className="ion-padding">
+        <div className="flex justify-end pb-2">
+          {/* <IonInput
+            placeholder="New item..."
+            value={newItemName}
+            onIonInput={onNewItemFieldChange}
+            onKeyDown={checkForEnterKeyPress}
+          /> */}
 
-            Add item
-          </span>
-        </IonButton>
-      </div>
-
-      <IonList className="rounded">
-        <IonReorderGroup
-          disabled={false}
-          onIonItemReorder={handleReorder}
-        >
-          {todoItemList.length ? (
-            todoItemList.map(todoItem => (
-              <TodoItem
-                key={`todoList-todoItem[${todoItem.id}]`}
-                item={todoItem}
-                onDeleteBtnClick={removeItem}
+          <IonButton onClick={() => history.push(`${match.url}/create`)}>
+            <span className="flex items-center gap-1">
+              <IonIcon
+                icon={add}
+                className="text-lg"
               />
-            ))
-          ) : (
-            <h2 className="flex justify-center w-full py-2 text-muted-foreground">
-              No items to display...
-            </h2>
-          )}
-        </IonReorderGroup>
-      </IonList>
-    </IonContent>
+
+              Add item
+            </span>
+          </IonButton>
+        </div>
+
+        <IonList className="rounded">
+          <IonReorderGroup
+            disabled={false}
+            onIonItemReorder={handleReorder}
+          >
+            {todoItemList.length ? (
+              todoItemList.map(todoItem => (
+                <TodoItem
+                  key={`todoList-todoItem[${todoItem.id}]`}
+                  item={todoItem}
+                  onDeleteBtnClick={removeItem}
+                />
+              ))
+            ) : (
+              <h2 className="flex justify-center w-full py-2 text-muted-foreground">
+                No items to display...
+              </h2>
+            )}
+          </IonReorderGroup>
+        </IonList>
+      </IonContent>
+    </IonPage>
   );
 };

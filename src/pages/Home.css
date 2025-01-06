@@ -1,0 +1,5 @@
+ion-toolbar {
+  --border-color: #0054e9;
+  --border-width: 0 0 2px 0;
+  --border-style: solid;
+}

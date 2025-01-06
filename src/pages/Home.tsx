@@ -1,29 +1,15 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonRouterOutlet } from "@ionic/react";
+import { Route, RouteComponentProps } from "react-router-dom";
+import TodoItemCreation from "../components/TodoItemCreation";
 import TodoList from "../components/TodoList";
 import "./Home.css";
 
-const Home: React.FC = () => {
+export default function Home({ match }: RouteComponentProps) {
 	return (
-		<IonPage>
-			<IonHeader>
-				<IonToolbar>
-					<IonTitle>Todo list</IonTitle>
-				</IonToolbar>
-			</IonHeader>
+		<IonRouterOutlet>
+			<Route exact path={match.url} component={TodoList} />
 
-			<IonContent fullscreen>
-				<IonHeader collapse="condense">
-					<IonToolbar>
-						<IonTitle size="large">
-							Todo list
-						</IonTitle>
-					</IonToolbar>
-				</IonHeader>
-
-				<TodoList />
-			</IonContent>
-		</IonPage>
+			<Route path={`${match.url}/create`} component={TodoItemCreation} />
+		</IonRouterOutlet>
 	);
 };
-
-export default Home;
