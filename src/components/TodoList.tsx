@@ -54,13 +54,13 @@ export default function ToDoList() {
 
   return (
     <IonContent className="ion-padding">
-      <div className="flex gap-4 pb-4">
-        <IonInput
+      <div className="flex justify-end pb-2">
+        {/* <IonInput
           placeholder="New item..."
           value={newItemName}
           onIonInput={onNewItemFieldChange}
           onKeyDown={checkForEnterKeyPress}
-        />
+        /> */}
 
         <IonButton onClick={addItem}>
           <span className="flex items-center gap-1">
@@ -69,7 +69,7 @@ export default function ToDoList() {
               className="text-lg"
             />
 
-            Add
+            Add item
           </span>
         </IonButton>
       </div>

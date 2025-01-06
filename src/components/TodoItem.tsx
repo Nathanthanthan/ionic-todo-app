@@ -1,7 +1,7 @@
 import { IonCheckboxCustomEvent } from "@ionic/core";
 import { CheckboxChangeEventDetail, IonButton, IonCheckbox, IonIcon, IonItem, IonReorder } from "@ionic/react";
 import { useState } from "react";
-import { trashBin } from 'ionicons/icons';
+import { trashBin } from "ionicons/icons";
 
 export type TTodoItem = {
   id: number;
@@ -25,7 +25,7 @@ export default function TodoItem({ item, onDeleteBtnClick }: TProps) {
       <IonCheckbox
         justify="start"
         labelPlacement="end"
-        className={isChecked ? 'text-muted-foreground line-through' : undefined}
+        className={isChecked ? "text-muted-foreground line-through" : undefined}
         checked={isChecked}
         onIonChange={onCheckboxChange}
       >
