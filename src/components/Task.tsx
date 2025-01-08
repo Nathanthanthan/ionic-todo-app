@@ -2,14 +2,14 @@ import { IonCheckboxCustomEvent } from "@ionic/core";
 import { CheckboxChangeEventDetail, IonButton, IonCheckbox, IonIcon, IonItem, IonReorder } from "@ionic/react";
 import { useState } from "react";
 import { trashBin } from "ionicons/icons";
-import { TTodoItem } from "../Utils/Types";
+import Task from "../Utils/Types/Task";
 
 type TProps = Readonly<{
-  item: TTodoItem;
+  item: Task;
   onDeleteBtnClick: (itemId: number) => void;
 }>;
 
-export default function TodoItem({ item, onDeleteBtnClick }: TProps) {
+export default function TaskItem({ item, onDeleteBtnClick }: TProps) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const onCheckboxChange = (e: IonCheckboxCustomEvent<CheckboxChangeEventDetail>) => {

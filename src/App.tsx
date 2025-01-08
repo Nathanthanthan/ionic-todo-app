@@ -19,7 +19,7 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 // Tailwind / general styling
-import "./index.css";
+import "./theme/index.css";
 
 /**
  * Ionic Dark Mode

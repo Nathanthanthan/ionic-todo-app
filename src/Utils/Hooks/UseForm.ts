@@ -3,11 +3,11 @@ import { z } from "zod";
 
 export default function useForm<T extends z.ZodRawShape>(
   formSchema: z.ZodObject<T>,
-  defaultValues: z.infer<typeof formSchema>,
+  defaultValues: Partial<z.infer<typeof formSchema>> = {},
 ) {
   type TFormValues = z.infer<typeof formSchema>;
 
-  const [formValues, setFormValues] = useState<TFormValues>(defaultValues);
+  const [formValues, setFormValues] = useState<Partial<TFormValues>>(defaultValues);
   const [errors, setErrors] = useState<z.inferFormattedError<typeof formSchema>>();
   const [submittedOnce, setSubmittedOnce] = useState<boolean>(false);
 

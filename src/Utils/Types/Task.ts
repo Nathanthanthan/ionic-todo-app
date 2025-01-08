@@ -1,10 +1,10 @@
-type TTodoItem = {
+type Task = {
   id: number;
   name: string;
   index: number;
   checked: boolean;
 
-  subTasks?: TTodoItem[];
+  subTasks?: Task[];
 };
 
-export default TTodoItem;
+export default Task;
