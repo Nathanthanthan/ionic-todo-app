@@ -10,11 +10,12 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useState } from "react";
-
 import { add } from "ionicons/icons";
+import { useState } from "react";
 import { RouteComponentProps } from "react-router";
-import TodoItem, { TTodoItem } from "./TodoItem";
+
+import { TTodoItem } from "../Utils/Types";
+import TodoItem from "./TodoItem";
 
 export default function ToDoList({ match, history }: RouteComponentProps) {
   const [currentId, setCurrentId] = useState<number>(0);
@@ -37,7 +38,7 @@ export default function ToDoList({ match, history }: RouteComponentProps) {
   const addItem = () => {
     if (!newItemName) return;
 
-    setTodoItemList([...todoItemList, { name: newItemName, id: currentId }]);
+    setTodoItemList([...todoItemList, { id: currentId, name: newItemName, index: currentId, checked: false }]);
 
     setCurrentId(currentId + 1);
     setNewItemName(null);

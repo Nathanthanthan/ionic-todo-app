@@ -2,11 +2,7 @@ import { IonCheckboxCustomEvent } from "@ionic/core";
 import { CheckboxChangeEventDetail, IonButton, IonCheckbox, IonIcon, IonItem, IonReorder } from "@ionic/react";
 import { useState } from "react";
 import { trashBin } from "ionicons/icons";
-
-export type TTodoItem = {
-  id: number;
-  name: string;
-};
+import { TTodoItem } from "../Utils/Types";
 
 type TProps = Readonly<{
   item: TTodoItem;
