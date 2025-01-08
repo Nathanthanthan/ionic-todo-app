@@ -105,7 +105,7 @@ function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: ContentPr
       <div className="flex">
         <IonButton
           className="flex-1"
-          color="danger"
+          color="secondary"
           onClick={() => setIsOpen(false)}
         >
           Cancel

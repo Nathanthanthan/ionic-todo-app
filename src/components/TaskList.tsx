@@ -13,8 +13,9 @@ import {
 import { add } from "ionicons/icons";
 import { useState } from "react";
 import Task from "../Utils/Types/Task";
-import TaskItem from "./TaskItem";
+import ConfirmationModal from "./Common/ConfirmationModal";
 import TaskCreationModal from "./TaskCreationModal";
+import TaskItem from "./TaskItem";
 
 export default function TaskList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,15 +23,19 @@ export default function TaskList() {
   const [currentId, setCurrentId] = useState<number>(0);
   const [taskList, setTaskList] = useState<Task[]>([]);
 
+  const [taskToDeleteId, setTaskToDeleteId] = useState<number>();
+
   function onTaskSubmit(taskName: string) {
     setTaskList([...taskList, { id: currentId, name: taskName, index: currentId, checked: false }]);
     setCurrentId(currentId + 1);
   }
 
-  function removeItem(itemId: number) {
+  function deleteTask() {
+    if (taskToDeleteId === undefined) return;
+
     const updatedTaskList = [...taskList];
 
-    const index = taskList.findIndex(item => item.id === itemId);
+    const index = taskList.findIndex(item => item.id === taskToDeleteId);
     updatedTaskList.splice(index, 1);
 
     setTaskList(updatedTaskList);
@@ -48,6 +53,19 @@ export default function TaskList() {
         </IonToolbar>
       </IonHeader>
 
+      {/* Confirm task deletion */}
+      <ConfirmationModal
+        isOpen={taskToDeleteId !== undefined}
+        closeModal={() => setTaskToDeleteId(undefined)}
+
+        title="Delete task"
+        content={<>Are you sure you want to <strong>delete</strong> this task?</>}
+
+        onCancel={() => setTaskToDeleteId(undefined)}
+        onConfirm={deleteTask}
+      />
+
+      {/* Task creation/edition */}
       <TaskCreationModal
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
@@ -78,7 +96,7 @@ export default function TaskList() {
                 <TaskItem
                   key={task.id}
                   task={task}
-                  onDeleteBtnClick={removeItem}
+                  onDeleteBtnClick={setTaskToDeleteId}
                 />
               ))
             ) : (

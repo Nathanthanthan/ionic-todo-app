@@ -17,6 +17,9 @@ import "@ionic/react/css/padding.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
+/* Ionic Dark Palette */
+import '@ionic/react/css/palettes/dark.system.css';
+
 // Tailwind / general styling
 import "./theme/index.css";
 
