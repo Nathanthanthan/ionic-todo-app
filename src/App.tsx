@@ -37,7 +37,7 @@ import "./theme/variables.css";
 
 // Routes
 import { Redirect, Route } from "react-router";
-import { HOME } from "./Constants/Routes";
+import { HOME } from "./Utils/Constants/Routes";
 
 setupIonicReact();
 
