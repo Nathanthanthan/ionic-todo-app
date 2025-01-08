@@ -13,7 +13,7 @@ import {
 import { add } from "ionicons/icons";
 import { useState } from "react";
 import Task from "../Utils/Types/Task";
-import TaskItem from "./Task";
+import TaskItem from "./TaskItem";
 import TaskCreationModal from "./TaskCreationModal";
 
 export default function TaskList() {
