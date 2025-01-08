@@ -77,7 +77,7 @@ export default function TaskList() {
               taskList.map(task => (
                 <TaskItem
                   key={task.id}
-                  item={task}
+                  task={task}
                   onDeleteBtnClick={removeItem}
                 />
               ))

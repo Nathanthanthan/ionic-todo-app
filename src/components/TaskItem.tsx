@@ -1,15 +1,29 @@
 import { IonCheckboxCustomEvent } from "@ionic/core";
-import { CheckboxChangeEventDetail, IonButton, IonCheckbox, IonIcon, IonItem, IonReorder } from "@ionic/react";
-import { useState } from "react";
+import {
+  CheckboxChangeEventDetail,
+  IonButton,
+  IonCheckbox,
+  IonIcon,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonReorder,
+} from "@ionic/react";
 import { trashBin } from "ionicons/icons";
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { LIST } from "../Utils/Constants/Routes";
 import Task from "../Utils/Types/Task";
 
 type Props = Readonly<{
-  item: Task;
+  task: Task;
   onDeleteBtnClick: (itemId: number) => void;
 }>;
 
-export default function TaskItem({ item, onDeleteBtnClick }: Props) {
+export default function TaskItem({ task, onDeleteBtnClick }: Props) {
+  const history = useHistory();
+
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   function onCheckboxChange(e: IonCheckboxCustomEvent<CheckboxChangeEventDetail>) {
@@ -17,25 +31,33 @@ export default function TaskItem({ item, onDeleteBtnClick }: Props) {
   };
 
   return (
-    <IonItem>
-      <IonCheckbox
-        justify="start"
-        labelPlacement="end"
-        className={isChecked ? "text-muted-foreground line-through" : undefined}
-        checked={isChecked}
-        onIonChange={onCheckboxChange}
-      >
-        {item.name}
-      </IonCheckbox>
+    <IonItemSliding>
+      <IonItemOptions side="start">
+        <IonItemOption onClick={() => history.push(`${LIST}/${task.id}`)}>
+          Details
+        </IonItemOption>
+      </IonItemOptions>
 
-      <IonButton
-        color="danger"
-        onClick={() => onDeleteBtnClick(item.id)}
-      >
-        <IonIcon icon={trashBin} />
-      </IonButton>
+      <IonItem>
+        <IonCheckbox
+          justify="start"
+          labelPlacement="end"
+          className={isChecked ? "text-muted-foreground line-through" : undefined}
+          checked={isChecked}
+          onIonChange={onCheckboxChange}
+        >
+          {task.name}
+        </IonCheckbox>
 
-      <IonReorder slot="end" />
-    </IonItem>
+        <IonButton
+          color="danger"
+          onClick={() => onDeleteBtnClick(task.id)}
+        >
+          <IonIcon icon={trashBin} />
+        </IonButton>
+
+        <IonReorder slot="end" />
+      </IonItem>
+    </IonItemSliding>
   );
 };

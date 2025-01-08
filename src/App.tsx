@@ -1,6 +1,5 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import Home from "./pages/Home";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -37,7 +36,9 @@ import "./theme/variables.css";
 
 // Routes
 import { Redirect, Route } from "react-router";
-import { HOME } from "./Utils/Constants/Routes";
+import { LIST } from "./Utils/Constants/Routes";
+import TaskDetails from "./components/TaskDetails";
+import TaskList from "./components/TaskList";
 
 setupIonicReact();
 
@@ -46,10 +47,11 @@ export default function App() {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          <Route path={HOME} render={props => <Home {...props} />} />
+          <Route exact path={LIST} component={TaskList} />
+          <Route path={`${LIST}/:id`} render={TaskDetails} />
 
           {/* Fallback route */}
-          <Route render={() => <Redirect to="/list" />} />
+          <Route render={() => <Redirect to={LIST} />} />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
