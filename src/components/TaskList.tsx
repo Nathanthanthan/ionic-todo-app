@@ -27,7 +27,7 @@ export default function TaskList() {
     setCurrentId(currentId + 1);
   }
 
-  const removeItem = (itemId: number) => {
+  function removeItem(itemId: number) {
     const updatedTaskList = [...taskList];
 
     const index = taskList.findIndex(item => item.id === itemId);
@@ -36,7 +36,7 @@ export default function TaskList() {
     setTaskList(updatedTaskList);
   };
 
-  const handleReorder = (event: CustomEvent<ItemReorderEventDetail>) => {
+  function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
     event.detail.complete();
   }
 

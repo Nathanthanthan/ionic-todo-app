@@ -4,15 +4,15 @@ import { useState } from "react";
 import { trashBin } from "ionicons/icons";
 import Task from "../Utils/Types/Task";
 
-type TProps = Readonly<{
+type Props = Readonly<{
   item: Task;
   onDeleteBtnClick: (itemId: number) => void;
 }>;
 
-export default function TaskItem({ item, onDeleteBtnClick }: TProps) {
+export default function TaskItem({ item, onDeleteBtnClick }: Props) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
-  const onCheckboxChange = (e: IonCheckboxCustomEvent<CheckboxChangeEventDetail>) => {
+  function onCheckboxChange(e: IonCheckboxCustomEvent<CheckboxChangeEventDetail>) {
     setIsChecked(e.target.checked);
   };
 

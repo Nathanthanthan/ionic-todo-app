@@ -5,9 +5,9 @@ export default function useForm<T extends z.ZodRawShape>(
   formSchema: z.ZodObject<T>,
   defaultValues: Partial<z.infer<typeof formSchema>> = {},
 ) {
-  type TFormValues = z.infer<typeof formSchema>;
+  type FormEntries = z.infer<typeof formSchema>;
 
-  const [formValues, setFormValues] = useState<Partial<TFormValues>>(defaultValues);
+  const [formValues, setFormValues] = useState<Partial<FormEntries>>(defaultValues);
   const [errors, setErrors] = useState<z.inferFormattedError<typeof formSchema>>();
   const [submittedOnce, setSubmittedOnce] = useState<boolean>(false);
 
@@ -23,7 +23,7 @@ export default function useForm<T extends z.ZodRawShape>(
     }
   }, [formValues]);
 
-  function editField<K extends keyof TFormValues>(fieldName: K, fieldValue: TFormValues[K] | undefined | null) {
+  function editField<K extends keyof FormEntries>(fieldName: K, fieldValue: FormEntries[K] | undefined | null) {
     setFormValues({ ...formValues, [fieldName]: fieldValue });
   }
 

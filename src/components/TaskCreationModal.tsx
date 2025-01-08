@@ -17,13 +17,13 @@ const formSchema = z.object({
   name: z.string().min(1, "Required"),
 });
 
-type TProps = Readonly<{
+type Props = Readonly<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onSubmit: (taskName: string) => void;
 }>;
 
-export default function TaskCreationModal({ isOpen, setIsOpen, onSubmit }: TProps) {
+export default function TaskCreationModal({ isOpen, setIsOpen, onSubmit }: Props) {
   const [didPresent, setDidPresent] = useState<boolean>(false);
 
   function onClose() {
@@ -54,13 +54,13 @@ export default function TaskCreationModal({ isOpen, setIsOpen, onSubmit }: TProp
   );
 }
 
-type TContentProps = Readonly<{
+type ContentProps = Readonly<{
   didPresent: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onSubmit: (taskName: string) => void;
 }>;
 
-function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: TContentProps) {
+function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: ContentProps) {
   const inputRef = useRef<HTMLIonInputElement>(null);
 
   useEffect(() => {
