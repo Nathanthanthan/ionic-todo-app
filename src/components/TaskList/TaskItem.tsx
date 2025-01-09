@@ -13,8 +13,8 @@ import {
 import { trashBin } from "ionicons/icons";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { LIST } from "../Utils/Constants/Routes";
-import Task from "../Utils/Types/Task";
+import { LIST } from "../../Utils/Constants/Routes";
+import Task from "../../Utils/Types/Task";
 
 type Props = Readonly<{
   task: Task;

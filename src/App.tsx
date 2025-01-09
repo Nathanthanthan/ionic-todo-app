@@ -37,11 +37,10 @@ import "@ionic/react/css/palettes/dark.system.css";
 /* Theme variables */
 import "./theme/variables.css";
 
+// Authentification
+import AuthProvider from "./Providers/AuthProvider";
 // Routes
-import { Redirect, Route } from "react-router";
-import { LIST } from "./Utils/Constants/Routes";
-import TaskDetails from "./components/TaskDetails";
-import TaskList from "./components/TaskList";
+import Routing from "./Routing";
 
 setupIonicReact();
 
@@ -49,13 +48,11 @@ export default function App() {
   return (
     <IonApp>
       <IonReactRouter>
-        <IonRouterOutlet>
-          <Route exact path={LIST} component={TaskList} />
-          <Route path={`${LIST}/:id`} render={TaskDetails} />
-
-          {/* Fallback route */}
-          <Route render={() => <Redirect to={LIST} />} />
-        </IonRouterOutlet>
+        <AuthProvider>
+          <IonRouterOutlet>
+            <Routing />
+          </IonRouterOutlet>
+        </AuthProvider>
       </IonReactRouter>
     </IonApp>
   );

@@ -1,6 +1,7 @@
 import { ItemReorderEventDetail } from "@ionic/core";
 import {
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -10,14 +11,17 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { add } from "ionicons/icons";
-import { useState } from "react";
-import Task from "../Utils/Types/Task";
-import ConfirmationModal from "./Common/ConfirmationModal";
+import { add, logOut as logOutIcon } from "ionicons/icons";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../Providers/AuthProvider";
+import Task from "../../Utils/Types/Task";
+import ConfirmationModal from "../Common/ConfirmationModal";
 import TaskCreationModal from "./TaskCreationModal";
 import TaskItem from "./TaskItem";
 
 export default function TaskList() {
+  const { logOut } = useContext(AuthContext);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [currentId, setCurrentId] = useState<number>(0);
@@ -25,7 +29,7 @@ export default function TaskList() {
 
   const [taskToDeleteId, setTaskToDeleteId] = useState<number>();
 
-  function onTaskSubmit(taskName: string) {
+  async function onTaskSubmit(taskName: string) {
     setTaskList([...taskList, { id: currentId, name: taskName, index: currentId, checked: false }]);
     setCurrentId(currentId + 1);
   }
@@ -49,6 +53,20 @@ export default function TaskList() {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="primary">
+            <IonButton
+              className="pr-5"
+              onClick={logOut}
+            >
+              Logout
+
+              <IonIcon
+                slot="end"
+                icon={logOutIcon}
+              />
+            </IonButton>
+          </IonButtons>
+
           <IonTitle>Task list</IonTitle>
         </IonToolbar>
       </IonHeader>

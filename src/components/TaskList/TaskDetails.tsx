@@ -1,6 +1,10 @@
 import { IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 
-export default function TaskDetails() {
+type Props = Readonly<{
+  id: number;
+}>;
+
+export default function TaskDetails({ id }: Props) {
   return (
     <IonPage>
       <IonHeader>
@@ -10,7 +14,7 @@ export default function TaskDetails() {
       </IonHeader>
 
       <div className=''>
-        Test
+        {id}
       </div>
     </IonPage>
   );
