@@ -1,5 +1,6 @@
 import { ItemReorderEventDetail } from "@ionic/core";
 import {
+  IonAlert,
   IonButton,
   IonButtons,
   IonContent,
@@ -15,7 +16,6 @@ import { add, logOut as logOutIcon } from "ionicons/icons";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
 import Task from "../../Utils/Types/Task";
-import ConfirmationModal from "../Common/ConfirmationModal";
 import TaskCreationModal from "./TaskCreationModal";
 import TaskItem from "./TaskItem";
 
@@ -43,6 +43,7 @@ export default function TaskList() {
     updatedTaskList.splice(index, 1);
 
     setTaskList(updatedTaskList);
+    setTaskToDeleteId(undefined);
   };
 
   function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
@@ -72,15 +73,23 @@ export default function TaskList() {
       </IonHeader>
 
       {/* Confirm task deletion */}
-      <ConfirmationModal
+      <IonAlert
         isOpen={taskToDeleteId !== undefined}
-        closeModal={() => setTaskToDeleteId(undefined)}
+        onIonAlertDidDismiss={({ detail }) => detail.role === "confirm" ? deleteTask() : setTaskToDeleteId(undefined)}
 
-        title="Delete task"
-        content={<>Are you sure you want to <strong>delete</strong> this task?</>}
+        header="Delete task"
+        message="Are you sure you want to <strong>delete</strong> this task?"
 
-        onCancel={() => setTaskToDeleteId(undefined)}
-        onConfirm={deleteTask}
+        buttons={[
+          {
+            role: "cancel",
+            text: "Cancel",
+          },
+          {
+            role: "confirm",
+            text: "Confirm",
+          },
+        ]}
       />
 
       {/* Task creation/edition */}

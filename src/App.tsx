@@ -42,7 +42,9 @@ import AuthProvider from "./Providers/AuthProvider";
 // Routes
 import Routing from "./Routing";
 
-setupIonicReact();
+setupIonicReact({
+  innerHTMLTemplatesEnabled: true,
+});
 
 export default function App() {
   return (
