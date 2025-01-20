@@ -22,7 +22,7 @@ import Todo, { getTodoProgress } from "../../Utils/Types/Todo";
 import { useHistory } from "react-router-dom";
 
 export default function Todos() {
-  const { logOut } = useContext(AuthContext);
+  const { currentUser, logOut } = useContext(AuthContext);
   const history = useHistory();
 
   function goToTasks(todoId: number) {
@@ -114,6 +114,12 @@ export default function Todos() {
       </IonHeader>
 
       <IonContent className="ion-padding">
+        {currentUser && (
+          <h1 className="pb-4">
+            {currentUser.displayName}'s todo list
+          </h1>
+        )}
+
         {test.map(todo => {
           const progress = getTodoProgress(todo);
 

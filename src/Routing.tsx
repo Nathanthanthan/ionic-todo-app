@@ -3,9 +3,10 @@ import { IonReactRouter } from "@ionic/react-router";
 import { useContext } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { AuthContext } from "./Providers/AuthProvider";
-import { LOGIN, TASKS, TODOS } from "./Utils/Constants/Routes";
+import { LOGIN, SIGN_UP, TASKS, TODOS } from "./Utils/Constants/Routes";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import TaskDetails from "./components/TaskList/TaskDetails";
 import TaskList from "./components/TaskList/TaskList";
 import Todos from "./components/Todos/Todos";
@@ -20,6 +21,14 @@ export default function Routing() {
         <Route exact path={LOGIN}>
           {currentUser === null ? (
             <Login />
+          ) : (
+            <Redirect to={TODOS} />
+          )}
+        </Route>
+
+        <Route exact path={SIGN_UP}>
+          {currentUser === null ? (
+            <SignUp />
           ) : (
             <Redirect to={TODOS} />
           )}
