@@ -126,6 +126,7 @@ export default function Todos() {
                 <IonCardHeader className="p-2">
                   <IonCardTitle>
                     <IonInput
+                      onClick={e => e.stopPropagation()}
                       value={todo.name}
                       className="discreet w-fit"
                     />
