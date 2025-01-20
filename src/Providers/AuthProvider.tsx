@@ -24,14 +24,18 @@ export default function AuthProvider({ children }: { children: JSX.Element | JSX
   const [currentUser, setCurrentUser] = useState<User | null>();
 
   useEffect(() => {
-    auth.onAuthStateChanged(setCurrentUser);
+    const unsubscribe = auth.onAuthStateChanged(setCurrentUser);
+    
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   async function logOut() {
     try {
       await signOut(auth);
     } catch (err) {
-      console.log(err);
+      console.error(err);
 
       showToast({
         message: "Error: failed to log out",

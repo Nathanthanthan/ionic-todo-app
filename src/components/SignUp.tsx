@@ -6,26 +6,27 @@ import {
   IonPage,
   useIonToast,
 } from "@ionic/react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { z } from "zod";
 import { auth } from "../Config/firebase";
-import { SIGN_UP, TASKS } from "../Utils/Constants/Routes";
+import { LOGIN, TODOS } from "../Utils/Constants/Routes";
 import useForm from "../Utils/Hooks/UseForm";
 
 const formSchema = z.object({
+  displayName: z.string().min(1, { message: "Required" }),
   email: z.string().min(1, { message: "Required" }).email("Invalid email"),
-  password: z.string().min(1, { message: "Required" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-export default function Login() {
+export default function SignUp() {
   const inputRef = useRef<HTMLIonInputElement>(null);
 
   const [showToast] = useIonToast();
   const history = useHistory();
   const {
-    formValues: { email, password },
+    formValues: { displayName, email, password },
     editField,
     errors,
     submitForm,
@@ -35,20 +36,22 @@ export default function Login() {
     if (email === undefined || password === undefined) return;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+
+      await updateProfile(res.user, { displayName });
 
       showToast({
-        message: "Successfully logged in",
+        message: "Successfully signed up",
         duration: 2000,
         color: "success",
       });
 
-      history.push(TASKS);
+      history.push(TODOS);
     } catch (error) {
-      console.error("Error: failed to log in", error);
+      console.error("Error: failed to sign up", error);
 
       showToast({
-        message: "Error: failed to log in",
+        message: "Error: failed to sign up",
         duration: 2000,
         color: "danger",
       });
@@ -62,13 +65,33 @@ export default function Login() {
           className="flex flex-col gap-6 justify-center items-center size-full"
           onSubmit={submitForm(onSubmitionSuccess)}
         >
-          <h1>Login</h1>
+          <h1>Sign up</h1>
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <IonInput
                 type="text"
                 ref={inputRef}
+
+                label="Username"
+                labelPlacement="floating"
+                placeholder="A cool alias"
+
+                value={displayName}
+                onIonInput={e => typeof e.target.value === "string" && editField("displayName", e.target.value)}
+                onKeyDown={e => e.key === "Enter" && submitForm(onSubmitionSuccess)}
+              />
+
+              {errors?.displayName && (
+                <IonNote color="danger" slot="end">
+                  {errors.displayName._errors[0]}
+                </IonNote>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <IonInput
+                type="text"
 
                 label="Email"
                 labelPlacement="floating"
@@ -112,15 +135,15 @@ export default function Login() {
             type="submit"
             disabled={errors !== undefined}
           >
-            Log in
+            Sign up
           </IonButton>
 
           <button
             type="button"
             className="underline"
-            onClick={() => history.push(SIGN_UP)}
+            onClick={() => history.push(LOGIN)}
           >
-            Sign up
+            Login
           </button>
         </form>
       </IonContent>
