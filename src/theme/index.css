@@ -6,6 +6,7 @@
   :root {
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
+    --border: 240 5.9% 90%;
 
     --ion-color-secondary: #f4f4f5;
     --ion-color-secondary-rgb: 244, 244, 245;
@@ -19,6 +20,7 @@
     :root {
       --muted: 240 3.7% 15.9%;
       --muted-foreground: 240 5% 64.9%;
+      --border: 240 3.7% 15.9%;
 
       --ion-color-secondary: #27272a;
       --ion-color-secondary-rgb: 39, 39, 42;
