@@ -1,5 +1,4 @@
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
+import { IonApp, setupIonicReact } from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -37,26 +36,21 @@ import "@ionic/react/css/palettes/dark.system.css";
 /* Theme variables */
 import "./theme/variables.css";
 
+// Authentification
+import AuthProvider from "./Providers/AuthProvider";
 // Routes
-import { Redirect, Route } from "react-router";
-import { LIST } from "./Utils/Constants/Routes";
-import TaskDetails from "./components/TaskDetails";
-import TaskList from "./components/TaskList";
+import Routing from "./Routing";
 
-setupIonicReact();
+setupIonicReact({
+  innerHTMLTemplatesEnabled: true,
+});
 
 export default function App() {
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet>
-          <Route exact path={LIST} component={TaskList} />
-          <Route path={`${LIST}/:id`} render={TaskDetails} />
-
-          {/* Fallback route */}
-          <Route render={() => <Redirect to={LIST} />} />
-        </IonRouterOutlet>
-      </IonReactRouter>
-    </IonApp>
+    <AuthProvider>
+      <IonApp>
+        <Routing />
+      </IonApp>
+    </AuthProvider>
   );
 }

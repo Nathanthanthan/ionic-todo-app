@@ -3,15 +3,14 @@ import {
   IonContent,
   IonHeader,
   IonInput,
-  IonItem,
   IonModal,
   IonNote,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import useForm from "../Utils/Hooks/UseForm";
-import { z } from "zod";
 import { useEffect, useRef, useState } from "react";
+import { z } from "zod";
+import useForm from "../../Utils/Hooks/UseForm";
 
 const formSchema = z.object({
   name: z.string().min(1, "Required"),
@@ -63,16 +62,21 @@ type ContentProps = Readonly<{
 function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: ContentProps) {
   const inputRef = useRef<HTMLIonInputElement>(null);
 
+  const {
+    formValues: { name },
+    editField,
+    errors,
+    submitForm,
+  } = useForm(formSchema);
+
   useEffect(() => {
     if (didPresent && inputRef.current !== null) inputRef.current.setFocus();
   }, [didPresent]);
 
-  const { formValues, editField, errors, submitForm } = useForm(formSchema);
-
   function onSubmitionSuccess() {
-    if (formValues.name === undefined) return;
+    if (name === undefined) return;
 
-    onSubmit(formValues.name);
+    onSubmit(name);
     setIsOpen(false);
   }
 
@@ -81,7 +85,7 @@ function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: ContentPr
       className="flex flex-col gap-10 justify-center size-full"
       onSubmit={submitForm(onSubmitionSuccess)}
     >
-      <IonItem>
+      <div className="flex flex-col gap-1">
         <IonInput
           type="text"
           ref={inputRef}
@@ -90,8 +94,8 @@ function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: ContentPr
           labelPlacement="floating"
           placeholder="New task..."
 
-          value={formValues.name}
-          onIonInput={e => typeof e.target.value !== "number" && editField("name", e.target.value)}
+          value={name}
+          onIonInput={e => typeof e.target.value === "string" && editField("name", e.target.value)}
           onKeyDown={e => e.key === "Enter" && submitForm(onSubmitionSuccess)}
         />
 
@@ -100,7 +104,7 @@ function TaskCreationModalContent({ setIsOpen, onSubmit, didPresent }: ContentPr
             {errors.name._errors[0]}
           </IonNote>
         )}
-      </IonItem>
+      </div>
 
       <div className="flex">
         <IonButton
