@@ -1,5 +1,4 @@
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
+import { IonApp, setupIonicReact } from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -48,14 +47,10 @@ setupIonicReact({
 
 export default function App() {
   return (
-    <IonApp>
-      <IonReactRouter>
-        <AuthProvider>
-          <IonRouterOutlet>
-            <Routing />
-          </IonRouterOutlet>
-        </AuthProvider>
-      </IonReactRouter>
-    </IonApp>
+    <AuthProvider>
+      <IonApp>
+        <Routing />
+      </IonApp>
+    </AuthProvider>
   );
 }

@@ -1,42 +1,50 @@
-import { useContext, useEffect } from "react";
+import { IonRouterOutlet } from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
+import { useContext } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { AuthContext } from "./Providers/AuthProvider";
-import { LIST, LOGIN } from "./Utils/Constants/Routes";
+import { LOGIN, TASKS, TODOS } from "./Utils/Constants/Routes";
+import ProtectedRoute from "./components/Common/ProtectedRoute";
 import Login from "./components/Login";
 import TaskDetails from "./components/TaskList/TaskDetails";
 import TaskList from "./components/TaskList/TaskList";
+import Todos from "./components/Todos/Todos";
 
 export default function Routing() {
   const { currentUser } = useContext(AuthContext);
 
-  useEffect(() => {
-    console.log('currentUser:', currentUser);
-  }, [currentUser]);
+  return (
+    <IonReactRouter>
+      <IonRouterOutlet>
+        {/* Login */}
+        <Route exact path={LOGIN}>
+          {currentUser === null ? (
+            <Login />
+          ) : (
+            <Redirect to={TODOS} />
+          )}
+        </Route>
 
-  return currentUser === null ? (
-    <>
-      {/* Login */}
-      <Route exact path={LOGIN} component={Login} />
+        {/* Todos */}
+        <ProtectedRoute exact path={TODOS}>
+          <Todos />
+        </ProtectedRoute>
 
-      {/* Redirect if not logged in */}
-      <Redirect to={LOGIN} />
-    </>
-  ) : (
-    <>
-      {/* Login */}
-      <Route exact path={LOGIN} component={Login} />
+        {/* Task list */}
+        <ProtectedRoute exact path={`${TODOS}/:todoId${TASKS}`}>
+          <TaskList />
+        </ProtectedRoute>
 
-      {/* Task list */}
-      <Route exact path={LIST} component={TaskList} />
+        {/* Task details */}
+        <ProtectedRoute exact path={`${TODOS}/:todoId${TASKS}/:taskId`}>
+          <TaskDetails />
+        </ProtectedRoute>
 
-      {/* Task details */}
-      <Route
-        path={`${LIST}/:id`}
-        render={({ match }) => <TaskDetails id={Number(match.params.id)} />}
-      />
-
-      {/* Fallback route */}
-      <Route render={() => <Redirect to={LIST} />} />
-    </>
+        {/* Fallback route */}
+        <ProtectedRoute exact>
+          <Redirect to={TODOS} />
+        </ProtectedRoute>
+      </IonRouterOutlet>
+    </IonReactRouter>
   );
 }

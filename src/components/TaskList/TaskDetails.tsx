@@ -1,10 +1,11 @@
 import { IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { useParams } from "react-router";
 
-type Props = Readonly<{
-  id: number;
-}>;
+export default function TaskDetails() {
+  const test = useParams();
 
-export default function TaskDetails({ id }: Props) {
+  console.log(test);
+
   return (
     <IonPage>
       <IonHeader>
@@ -14,7 +15,7 @@ export default function TaskDetails({ id }: Props) {
       </IonHeader>
 
       <div className=''>
-        {id}
+        {/* {taskId} */}
       </div>
     </IonPage>
   );

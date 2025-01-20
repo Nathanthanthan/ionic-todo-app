@@ -11,7 +11,7 @@ import { useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { z } from "zod";
 import { auth } from "../Config/firebase";
-import { LIST } from "../Utils/Constants/Routes";
+import { TASKS } from "../Utils/Constants/Routes";
 import useForm from "../Utils/Hooks/UseForm";
 
 const formSchema = z.object({
@@ -43,7 +43,7 @@ export default function Login() {
         color: "success",
       });
 
-      history.push(LIST);
+      history.push(TASKS);
     } catch (error) {
       console.error("Error: failed to log in", error);
 
