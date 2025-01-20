@@ -3,7 +3,7 @@ import axios from "axios";
 export const API_CONFIG = {
   baseURL: process.env.API_URL,
   endpoints: {
-    todos: '/tasks',
+    tasks: '/tasks',
   },
   timeout: 10000,
   retryAttempts: 3,

@@ -52,10 +52,32 @@ ion-toolbar {
 
 ion-input {
   --background: #373737 !important;
-  --color: #fff !important;
   --placeholder-color: #ddd !important;
   --placeholder-opacity: 0.8 !important;
 
   --padding-end: 1em !important;
   --padding-start: 1em !important;
+}
+
+ion-input.discreet {
+  --background: var(--ion-background-color) !important;
+  --highlight-height: 0 !important;
+
+  --padding-start: 0.5em !important;
+  --padding-end: 0.5em !important;
+  --padding-top: 0.25em !important;
+  --padding-bottom: 0.25em !important;
+
+  --border-radius: 0.25rem !important;
+
+  min-height: unset !important;
+
+  label {
+    @apply border;
+    @apply border-border;
+  }
+}
+
+ion-input.discreet:focus-within {
+  --background: #373737 !important;
 }
