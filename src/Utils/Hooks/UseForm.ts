@@ -27,6 +27,19 @@ export default function useForm<T extends z.ZodRawShape>(
     setFormValues({ ...formValues, [fieldName]: fieldValue });
   }
 
+  function getUpdatedValues(comparisonMap: Record<keyof FormEntries, boolean>): Partial<FormEntries> | undefined {
+    let result: Partial<FormEntries> | undefined = undefined;
+    
+    for (const [fieldName, differsFromDefault] of Object.entries(comparisonMap)) {
+      if (!differsFromDefault) return;
+      
+      if (result === undefined) result = { [fieldName]: formValues[fieldName] } as Partial<FormEntries>;
+      else result = { ...result as Partial<FormEntries>, [fieldName]: formValues[fieldName] };
+    }
+
+    return result;
+  }
+
   function submitForm(onSubmitionSuccess: () => void) {
     return (e?: React.FormEvent<HTMLFormElement>) => {
       if (!submittedOnce) setSubmittedOnce(true);
@@ -52,6 +65,7 @@ export default function useForm<T extends z.ZodRawShape>(
     errors,
     setErrors,
 
+    getUpdatedValues,
     submitForm,
   };
 };
