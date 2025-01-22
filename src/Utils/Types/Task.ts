@@ -1,10 +1,15 @@
 type Task = {
-  id: number;
+  todoId: string;
+  id: string;
   name: string;
   index: number;
   checked: boolean;
 
-  subTasks?: Task[];
+  subTasks?: SubTask[];
 };
 
-export default Task;
+type SubTask = Task & {
+  taskId: string;
+};
+
+export type { Task, SubTask };

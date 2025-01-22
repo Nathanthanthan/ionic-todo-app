@@ -1,7 +1,8 @@
-import Task from "./Task";
+import { Task } from "./Task";
 
 type Todo = {
-  id: number;
+  uid: string;
+  id: string;
   name: string;
   index: number;
 

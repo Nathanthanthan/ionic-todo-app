@@ -15,7 +15,7 @@ import {
 import { add, logOut as logOutIcon } from "ionicons/icons";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
-import Task from "../../Utils/Types/Task";
+import { Task } from "../../Utils/Types/Task";
 import TaskCreationModal from "./TaskCreationModal";
 import TaskItem from "./TaskItem";
 
@@ -30,7 +30,7 @@ export default function TaskList() {
   const [taskToDeleteId, setTaskToDeleteId] = useState<number>();
 
   async function onTaskSubmit(taskName: string) {
-    setTaskList([...taskList, { id: currentId, name: taskName, index: currentId, checked: false }]);
+    // setTaskList([...taskList, { id: currentId, name: taskName, index: currentId, checked: false }]);
     setCurrentId(currentId + 1);
   }
 
@@ -39,8 +39,8 @@ export default function TaskList() {
 
     const updatedTaskList = [...taskList];
 
-    const index = taskList.findIndex(item => item.id === taskToDeleteId);
-    updatedTaskList.splice(index, 1);
+    // const index = taskList.findIndex(item => item.id === taskToDeleteId);
+    // updatedTaskList.splice(index, 1);
 
     setTaskList(updatedTaskList);
     setTaskToDeleteId(undefined);
