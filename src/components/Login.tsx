@@ -10,7 +10,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { z } from "zod";
-import { auth } from "../Config/firebase";
+import { fbAuth } from "../Config/firebase";
 import { SIGN_UP, TASKS } from "../Utils/Constants/Routes";
 import useForm from "../Utils/Hooks/UseForm";
 
@@ -35,7 +35,7 @@ export default function Login() {
     if (email === undefined || password === undefined) return;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(fbAuth, email, password);
 
       showToast({
         message: "Successfully logged in",
@@ -44,8 +44,8 @@ export default function Login() {
       });
 
       history.push(TASKS);
-    } catch (error) {
-      console.error("Error: failed to log in", error);
+    } catch (err) {
+      console.error("Error: failed to log in", err);
 
       showToast({
         message: "Error: failed to log in",
