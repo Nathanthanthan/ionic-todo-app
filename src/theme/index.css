@@ -81,3 +81,7 @@ ion-input.discreet {
 ion-input.discreet:focus-within {
   --background: #373737 !important;
 }
+
+ion-popover.no-backdrop {
+  --backdrop-opacity: 0 !important;
+}
