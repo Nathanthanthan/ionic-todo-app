@@ -10,7 +10,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { z } from "zod";
-import { auth } from "../Config/firebase";
+import { fbAuth } from "../Config/firebase";
 import { LOGIN, TODOS } from "../Utils/Constants/Routes";
 import useForm from "../Utils/Hooks/UseForm";
 
@@ -33,27 +33,26 @@ export default function SignUp() {
   } = useForm(formSchema);
 
   async function onSubmitionSuccess() {
-    if (email === undefined || password === undefined) return;
+    if (email === undefined || password === undefined || displayName === undefined) return;
 
     try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-
+      const res = await createUserWithEmailAndPassword(fbAuth, email, password);
       await updateProfile(res.user, { displayName });
 
       showToast({
         message: "Successfully signed up",
-        duration: 2000,
         color: "success",
+        duration: 2000,
       });
 
       history.push(TODOS);
-    } catch (error) {
-      console.error("Error: failed to sign up", error);
+    } catch (err) {
+      console.error("Error: failed to sign up", err);
 
       showToast({
         message: "Error: failed to sign up",
-        duration: 2000,
         color: "danger",
+        duration: 2000,
       });
     }
   }

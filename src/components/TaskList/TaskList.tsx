@@ -1,60 +1,81 @@
-import { ItemReorderEventDetail } from "@ionic/core";
 import {
   IonAlert,
+  IonBackButton,
   IonButton,
   IonButtons,
-  IonContent,
   IonHeader,
   IonIcon,
   IonList,
   IonPage,
-  IonReorderGroup,
-  IonTitle,
+  IonProgressBar,
+  IonSpinner,
+  IonToast,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
 import { add, logOut as logOutIcon } from "ionicons/icons";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { AuthContext } from "../../Providers/AuthProvider";
-import Task from "../../Utils/Types/Task";
+import useQuery from "../../Utils/Hooks/UseQuery";
+import useTaskService from "../../Utils/Hooks/UseServices/UseTaskService";
+import useTodoService from "../../Utils/Hooks/UseServices/UseTodoService";
+import { getTodoProgress } from "../../Utils/Types/Todo";
 import TaskCreationModal from "./TaskCreationModal";
 import TaskItem from "./TaskItem";
 
 export default function TaskList() {
-  const { logOut } = useContext(AuthContext);
+  const { todoId } = useParams<{ todoId?: string }>();
+  const { currentUser, logOut } = useContext(AuthContext);
+  const [showToast] = useIonToast();
 
+  const todoService = useTodoService();
+  const taskService = useTaskService(todoId);
+
+  const { data: todo, loading: _, reRunQuery: refetchTodo } = useQuery({
+    query: todoService?.getTodoById,
+    args: [todoId],
+  });
+
+  const { data: tasks, loading: tasksLoading, reRunQuery: refetchTasks } = useQuery({
+    query: taskService?.getTasksByTodoId,
+    args: [todoId],
+  });
+
+  const [todoProgress, setTodoProgress] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskToDeleteId, setTaskToDeleteId] = useState<string>();
 
-  const [currentId, setCurrentId] = useState<number>(0);
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  useEffect(() => {
+    if (todo !== undefined) setTodoProgress(getTodoProgress(todo));
+  }, [todo]);
 
-  const [taskToDeleteId, setTaskToDeleteId] = useState<number>();
+  async function onTaskSubmit(name: string) {
+    if (taskService === undefined || !currentUser) return;
 
-  async function onTaskSubmit(taskName: string) {
-    setTaskList([...taskList, { id: currentId, name: taskName, index: currentId, checked: false }]);
-    setCurrentId(currentId + 1);
-  }
+    const res = await taskService.create({ name });
 
-  function deleteTask() {
-    if (taskToDeleteId === undefined) return;
-
-    const updatedTaskList = [...taskList];
-
-    const index = taskList.findIndex(item => item.id === taskToDeleteId);
-    updatedTaskList.splice(index, 1);
-
-    setTaskList(updatedTaskList);
-    setTaskToDeleteId(undefined);
-  };
-
-  function handleReorder(event: CustomEvent<ItemReorderEventDetail>) {
-    event.detail.complete();
+    if (res) {
+      refetchTasks();
+      refetchTodo();
+    } else {
+      showToast({
+        message: "Error: failed to create task",
+        color: "danger",
+        duration: 2000,
+      });
+    }
   }
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="primary">
+          <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+
+          <IonButtons slot="end">
             <IonButton
               className="pr-5"
               onClick={logOut}
@@ -67,30 +88,8 @@ export default function TaskList() {
               />
             </IonButton>
           </IonButtons>
-
-          <IonTitle>Task list</IonTitle>
         </IonToolbar>
       </IonHeader>
-
-      {/* Confirm task deletion */}
-      <IonAlert
-        isOpen={taskToDeleteId !== undefined}
-        onIonAlertDidDismiss={({ detail }) => detail.role === "confirm" ? deleteTask() : setTaskToDeleteId(undefined)}
-
-        header="Delete task"
-        message="Are you sure you want to <strong>delete</strong> this task?"
-
-        buttons={[
-          {
-            role: "cancel",
-            text: "Cancel",
-          },
-          {
-            role: "confirm",
-            text: "Confirm",
-          },
-        ]}
-      />
 
       {/* Task creation/edition */}
       <TaskCreationModal
@@ -99,9 +98,21 @@ export default function TaskList() {
         onSubmit={onTaskSubmit}
       />
 
-      <IonContent className="ion-padding">
-        <div className="flex justify-end pb-2">
-          <IonButton onClick={() => setIsModalOpen(true)}>
+      <div className="size-full p-4">
+        <div className="flex justify-end items-center gap-4 pb-2">
+          {todo && (
+            <>
+              <h1 className="shrink-0">{todo.name}</h1>
+
+              <div className="inline-flex flex-col gap-0.5 w-full">
+                {todoProgress.toFixed(0)}%
+
+                <IonProgressBar value={todoProgress / 100} />
+              </div>
+            </>
+          )}
+
+          <IonButton className="shrink-0" onClick={() => setIsModalOpen(true)}>
             <span className="flex items-center gap-1">
               <IonIcon
                 icon={add}
@@ -114,26 +125,44 @@ export default function TaskList() {
         </div>
 
         <IonList className="rounded">
-          <IonReorderGroup
-            disabled={false}
-            onIonItemReorder={handleReorder}
-          >
-            {taskList.length ? (
-              taskList.map(task => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onDeleteBtnClick={setTaskToDeleteId}
+          {(tasks === undefined || tasksLoading) ? (
+            <div className="flex justify-center items-center size-full">
+              <IonSpinner />
+            </div>
+          ) : (
+            tasks === null ? (
+              <div className="flex justify-center items-center size-full">
+                <IonButton onClick={refetchTasks}>
+                  Retry
+                </IonButton>
+
+                <IonToast
+                  isOpen
+                  message="Error: failed to fetch tasks"
+                  color="danger"
+                  duration={2000}
                 />
-              ))
+              </div>
             ) : (
-              <h2 className="flex justify-center w-full py-2 text-muted-foreground">
-                No items to display...
-              </h2>
-            )}
-          </IonReorderGroup>
+              tasks.length ? (
+                tasks.map(task => (
+                  <TaskItem
+                    key={task.id}
+                    todoId={todoId}
+                    task={task}
+                    refetchTodo={refetchTodo}
+                    refetchTasks={refetchTasks}
+                  />
+                ))
+              ) : (
+                <span className="flex justify-center w-full py-2 text-2xl text-muted-foreground">
+                  No tasks to display...
+                </span>
+              )
+            )
+          )}
         </IonList>
-      </IonContent>
+      </div>
     </IonPage>
   );
 };

@@ -1,7 +1,7 @@
 import { useIonToast } from "@ionic/react";
 import { signOut, User } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
-import { auth } from "../Config/firebase";
+import { fbAuth } from "../Config/firebase";
 
 export const AuthContext = createContext<{
   /**
@@ -24,8 +24,8 @@ export default function AuthProvider({ children }: { children: JSX.Element | JSX
   const [currentUser, setCurrentUser] = useState<User | null>();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(setCurrentUser);
-    
+    const unsubscribe = fbAuth.onAuthStateChanged(setCurrentUser);
+
     return () => {
       unsubscribe();
     };
@@ -33,14 +33,14 @@ export default function AuthProvider({ children }: { children: JSX.Element | JSX
 
   async function logOut() {
     try {
-      await signOut(auth);
+      await signOut(fbAuth);
     } catch (err) {
       console.error(err);
 
       showToast({
         message: "Error: failed to log out",
-        duration: 2000,
         color: "danger",
+        duration: 2000,
       });
     }
   }

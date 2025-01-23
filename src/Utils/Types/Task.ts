@@ -1,10 +1,7 @@
 type Task = {
-  id: number;
+  id: string;
   name: string;
-  index: number;
   checked: boolean;
-
-  subTasks?: Task[];
 };
 
 export default Task;
