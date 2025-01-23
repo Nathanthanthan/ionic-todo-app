@@ -1,5 +1,4 @@
 import {
-  IonAlert,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -24,7 +23,11 @@ import { getTodoProgress } from "../../Utils/Types/Todo";
 import TaskCreationModal from "./TaskCreationModal";
 import TaskItem from "./TaskItem";
 
-export default function TaskList() {
+type Props = Readonly<{
+  refetchTodos: () => Promise<void>;
+}>;
+
+export default function TaskList({ refetchTodos }: Props) {
   const { todoId } = useParams<{ todoId?: string }>();
   const { currentUser, logOut } = useContext(AuthContext);
   const [showToast] = useIonToast();
@@ -44,7 +47,6 @@ export default function TaskList() {
 
   const [todoProgress, setTodoProgress] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskToDeleteId, setTaskToDeleteId] = useState<string>();
 
   useEffect(() => {
     if (todo !== undefined) setTodoProgress(getTodoProgress(todo));
@@ -150,6 +152,7 @@ export default function TaskList() {
                     key={task.id}
                     todoId={todoId}
                     task={task}
+                    refetchTodos={refetchTodos}
                     refetchTodo={refetchTodo}
                     refetchTasks={refetchTasks}
                   />

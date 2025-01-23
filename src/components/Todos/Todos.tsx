@@ -14,22 +14,21 @@ import {
 import { add, logOut as logOutIcon, trashBin } from "ionicons/icons";
 import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
-import useQuery from "../../Utils/Hooks/UseQuery";
-import useTodoService from "../../Utils/Hooks/UseServices/UseTodoService";
-import { getTodoProgress } from "../../Utils/Types/Todo";
+import Todo, { getTodoProgress } from "../../Utils/Types/Todo";
 import TodoCard from "./TodoCard";
 import TodoCreationModal from "./TodoCreationModal";
+import TodoService from "../../Services/TodoService";
 
-export default function Todos() {
+type Props = Readonly<{
+  todos: Todo[] | null | undefined;
+  todoService: TodoService | undefined;
+  todosLoading: boolean;
+  refetchTodos: () => Promise<void>;
+}>;
+
+export default function Todos({ todos, todoService, todosLoading, refetchTodos }: Props) {
   const { currentUser, logOut } = useContext(AuthContext);
   const [showToast] = useIonToast();
-
-  const todoService = useTodoService();
-
-  const { data: todos, loading: todosLoading, reRunQuery: refetchTodos } = useQuery({
-    query: todoService?.getCurrentUserTodos,
-    args: [],
-  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteAlertProps, setDeleteAlertProps] = useState<{ message: string; onConfirm: () => void; }>();
