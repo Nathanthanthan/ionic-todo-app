@@ -17,11 +17,12 @@ import Task from "../../Utils/Types/Task";
 type Props = Readonly<{
   todoId: string | undefined;
   task: Task;
+  refetchTodos: () => Promise<void>;
   refetchTodo: () => Promise<void>;
   refetchTasks: () => Promise<void>;
 }>;
 
-export default function TaskItem({ todoId, task, refetchTodo, refetchTasks }: Props) {
+export default function TaskItem({ todoId, task, refetchTodos, refetchTodo, refetchTasks }: Props) {
   const { id: taskId, name: taskName, checked } = task;
 
   const inputRef = useRef<HTMLIonInputElement>(null);
@@ -71,6 +72,7 @@ export default function TaskItem({ todoId, task, refetchTodo, refetchTasks }: Pr
       return;
     }
 
+    refetchTodos();
     refetchTodo();
     refetchTasks();
   }
@@ -90,6 +92,7 @@ export default function TaskItem({ todoId, task, refetchTodo, refetchTasks }: Pr
       return;
     }
 
+    refetchTodos();
     refetchTodo();
     refetchTasks();
   }

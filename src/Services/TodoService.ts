@@ -1,9 +1,8 @@
 import axios from "axios";
 import { fbSecret } from "../Config/firebase";
-import { TODOS_ENDPOINT } from "../Utils/Constants/Endpoints";
+import { TASKS_ENDPOINT, TODOS_ENDPOINT } from "../Utils/Constants/Endpoints";
 import Todo from "../Utils/Types/Todo";
 import TaskService from "./TaskService";
-import Task from "../Utils/Types/Task";
 
 export default class TodoService {
   private readonly uid: string;
@@ -46,7 +45,10 @@ export default class TodoService {
 
   delete = async (id: string): Promise<boolean> => {
     try {
-      await axios.delete(`${this.urlTrunk}/${id}.json?auth=${fbSecret}`);
+      await Promise.all([
+        axios.delete(`${this.urlTrunk}/${id}.json?auth=${fbSecret}`),
+        axios.delete(`${TASKS_ENDPOINT}/${this.uid}/${id}.json?auth=${fbSecret}`),
+      ]);
 
       return true;
     } catch (err) {
