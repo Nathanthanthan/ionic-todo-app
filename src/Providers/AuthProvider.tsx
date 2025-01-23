@@ -39,8 +39,8 @@ export default function AuthProvider({ children }: { children: JSX.Element | JSX
 
       showToast({
         message: "Error: failed to log out",
-        duration: 2000,
         color: "danger",
+        duration: 2000,
       });
     }
   }

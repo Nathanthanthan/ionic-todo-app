@@ -1,14 +1,25 @@
 import axios from "axios";
 import { fbSecret } from "../Config/firebase";
+import { TODOS_ENDPOINT } from "../Utils/Constants/Endpoints";
 import Todo from "../Utils/Types/Todo";
-import AbstractService from "./AbstractService";
+import TaskService from "./TaskService";
+import Task from "../Utils/Types/Task";
 
-const todosEndpoint = "/todos";
+export default class TodoService {
+  private readonly uid: string;
+  private readonly urlTrunk: string;
 
-class TodoService implements AbstractService<Todo> {
-  async create(todo: Partial<Todo>): Promise<boolean> {
+  constructor(uid: string) {
+    this.uid = uid;
+    this.urlTrunk = `${TODOS_ENDPOINT}/${uid}`;
+  }
+
+  create = async (todo: Partial<Todo>): Promise<boolean> => {
     try {
-      await axios.post(`${todosEndpoint}.json?auth=${fbSecret}`, todo);
+      const cleanTodo = todo;
+      delete cleanTodo["id"];
+
+      await axios.post(`${this.urlTrunk}.json?auth=${fbSecret}`, cleanTodo);
 
       return true;
     } catch (err) {
@@ -16,11 +27,14 @@ class TodoService implements AbstractService<Todo> {
     }
 
     return false;
-  }
+  };
 
-  async update(id: string, updatedValues: Partial<Todo>): Promise<boolean> {
+  update = async (id: string, updatedValues: Partial<Todo>): Promise<boolean> => {
     try {
-      await axios.patch(`${todosEndpoint}/${id}.json?auth=${fbSecret}`, updatedValues);
+      const cleanTodo = updatedValues;
+      delete cleanTodo["id"];
+
+      await axios.patch(`${this.urlTrunk}/${id}.json?auth=${fbSecret}`, cleanTodo);
 
       return true;
     } catch (err) {
@@ -28,11 +42,11 @@ class TodoService implements AbstractService<Todo> {
     }
 
     return false;
-  }
+  };
 
-  async delete(id: string): Promise<boolean> {
+  delete = async (id: string): Promise<boolean> => {
     try {
-      await axios.delete(`${todosEndpoint}/${id}.json?auth=${fbSecret}`);
+      await axios.delete(`${this.urlTrunk}/${id}.json?auth=${fbSecret}`);
 
       return true;
     } catch (err) {
@@ -40,27 +54,48 @@ class TodoService implements AbstractService<Todo> {
     }
 
     return false;
-  }
+  };
 
-  async getByUserId(uid: string | undefined): Promise<Todo[] | undefined> {
-    if (uid === undefined) return;
-
+  getCurrentUserTodos = async (): Promise<Todo[] | null> => {
     try {
-      const res = await axios.get(`${todosEndpoint}.json?auth=${fbSecret}&uid=${uid}`);
+      const res = await axios.get(`${this.urlTrunk}.json?auth=${fbSecret}`);
+
+      if (res.data === null) return [];
+
       const todos: Todo[] = [];
 
       for (const [todoId, todo] of Object.entries(res.data)) {
-        todos.push({ ...todo as Todo, id: todoId, tasks: (todo as Todo).tasks ?? [] });
+        const taskService = new TaskService(this.uid, todoId);
+
+        const tasks = await taskService.getTasksByTodoId(todoId);
+
+        todos.push({ ...todo as Todo, id: todoId, tasks: tasks ?? [] });
       }
 
       return todos;
     } catch (err) {
-      console.error("Error: failed to get todos", err);
+      console.error("Error: failed to fetch todos", err);
+    }
+
+    return null;
+  };
+
+  getTodoById = async (todoId: string | undefined): Promise<Todo | undefined> => {
+    if (todoId === undefined) return;
+
+    try {
+      const taskService = new TaskService(this.uid, todoId);
+
+      const res = await Promise.all([
+        axios.get(`${this.urlTrunk}/${todoId}.json?auth=${fbSecret}`),
+        taskService.getTasksByTodoId(todoId),
+      ]);
+
+      return { ...res[0].data, id: todoId, tasks: res[1] ?? [] };
+    } catch (err) {
+      console.error("Error: failed to fetch todos", err);
     }
 
     return;
-  }
+  };
 }
-
-const todoService = new TodoService();
-export default todoService;

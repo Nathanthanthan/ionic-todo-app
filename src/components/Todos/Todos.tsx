@@ -1,58 +1,100 @@
 import {
+  IonAlert,
   IonButton,
   IonButtons,
-  IonContent,
   IonHeader,
   IonIcon,
   IonPage,
   IonSpinner,
   IonTitle,
+  IonToast,
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { add, logOut as logOutIcon } from "ionicons/icons";
-import { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { add, logOut as logOutIcon, trashBin } from "ionicons/icons";
+import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
-import todoService from "../../Services/TodoService";
-import { TASKS, TODOS } from "../../Utils/Constants/Routes";
 import useQuery from "../../Utils/Hooks/UseQuery";
+import useTodoService from "../../Utils/Hooks/UseServices/UseTodoService";
+import { getTodoProgress } from "../../Utils/Types/Todo";
 import TodoCard from "./TodoCard";
 import TodoCreationModal from "./TodoCreationModal";
 
 export default function Todos() {
   const { currentUser, logOut } = useContext(AuthContext);
-  const history = useHistory();
   const [showToast] = useIonToast();
 
+  const todoService = useTodoService();
+
   const { data: todos, loading: todosLoading, reRunQuery: refetchTodos } = useQuery({
-    query: todoService.getByUserId,
-    args: [currentUser?.uid],
+    query: todoService?.getCurrentUserTodos,
+    args: [],
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteAlertProps, setDeleteAlertProps] = useState<{ message: string; onConfirm: () => void; }>();
+
+  const completedTodosIds = useMemo(() => {
+    if (!todos) return [];
+
+    const result = [];
+
+    for (const t of todos) {
+      if (getTodoProgress(t) === 100) result.push(t.id);
+    }
+
+    return result;
+  }, [todos]);
 
   async function onTodoSubmit(name: string) {
-    if (!currentUser) return;
+    if (todoService === undefined) return;
 
-    const res = await todoService.create({ uid: currentUser.uid, name });
+    const res = await todoService.create({ name });
 
     if (res) {
       refetchTodos();
     } else {
       showToast({
         message: "Error: failed to create todo",
-        duration: 2000,
         color: "danger",
+        duration: 2000,
       });
     }
+  }
+
+  async function deleteAllCompleted() {
+    if (todoService === undefined) return;
+
+    const res = await Promise.all(completedTodosIds.map(todoService.delete));
+
+    for (const r of res) {
+      if (r) continue;
+
+      showToast({
+        message: "Error: failed to delete task",
+        color: "danger",
+        duration: 2000,
+      });
+
+      return;
+    }
+
+    showToast({
+      message: "Successfully deleted all completed todos",
+      color: "success",
+      duration: 2000,
+    });
+
+    refetchTodos();
   }
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="primary">
+          <IonTitle>Todos</IonTitle>
+
+          <IonButtons slot="end">
             <IonButton
               className="pr-5"
               onClick={logOut}
@@ -65,8 +107,6 @@ export default function Todos() {
               />
             </IonButton>
           </IonButtons>
-
-          <IonTitle>Todos</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -77,41 +117,105 @@ export default function Todos() {
         onSubmit={onTodoSubmit}
       />
 
-      <IonContent className="ion-padding">
+      {/* Confirm todo deletion */}
+      <IonAlert
+        isOpen={deleteAlertProps !== undefined}
+        onIonAlertDidDismiss={({ detail }) => {
+          if (detail.role === "confirm" && deleteAlertProps !== undefined) deleteAlertProps.onConfirm();
+          setDeleteAlertProps(undefined);
+        }}
+
+        header="Delete task"
+        message={deleteAlertProps?.message}
+
+        buttons={[
+          {
+            role: "cancel",
+            text: "Cancel",
+          },
+          {
+            role: "confirm",
+            text: "Confirm",
+          },
+        ]}
+      />
+
+      <div className="size-full p-4">
         <div className={`flex pb-2 ${currentUser ? "justify-between" : "justify-end"}`}>
           {currentUser && (
             <h1>{currentUser.displayName}'s todo list</h1>
           )}
 
-          <IonButton onClick={() => setIsModalOpen(true)}>
-            <span className="flex items-center gap-1">
-              <IonIcon
-                icon={add}
-                className="text-lg"
-              />
+          <div className="inline-flex gap-2">
+            <IonButton
+              disabled={!completedTodosIds.length}
+              color="danger"
+              onClick={() => setDeleteAlertProps({
+                message: "Are you sure you want to <strong>delete</strong> all completed todos?",
+                onConfirm: deleteAllCompleted,
+              })}
+            >
+              <span className="flex items-center gap-1">
+                <IonIcon
+                  icon={trashBin}
+                  className="text-lg"
+                />
 
-              Add todo
-            </span>
-          </IonButton>
+                Delete completed
+              </span>
+            </IonButton>
+
+            <IonButton onClick={() => setIsModalOpen(true)}>
+              <span className="flex items-center gap-1">
+                <IonIcon
+                  icon={add}
+                  className="text-lg"
+                />
+
+                Add todo
+              </span>
+            </IonButton>
+          </div>
         </div>
 
-        {todos === undefined ? (
-          todosLoading ? (
-            <IonSpinner />
+        <div className="flex flex-col gap-4 size-full">
+          {(todos === undefined || todosLoading) ? (
+            <div className="flex justify-center items-center size-full">
+              <IonSpinner />
+            </div>
           ) : (
-            "No"
-          )
-        ) : (
-          todos.map(todo => (
-            <TodoCard
-              key={todo.id}
-              todo={todo}
-              onClick={() => history.push(`${TODOS}/${todo.id}${TASKS}`)}
-              refetchTodos={refetchTodos}
-            />
-          ))
-        )}
-      </IonContent>
+            todos === null ? (
+              <div className="flex justify-center items-center size-full">
+                <IonButton onClick={refetchTodos}>
+                  Retry
+                </IonButton>
+
+                <IonToast
+                  isOpen
+                  message="Error: failed to fetch todos"
+                  color="danger"
+                  duration={2000}
+                />
+              </div>
+            ) : (
+              !todos.length ? (
+                <div className="flex justify-center items-center size-full text-2xl text-muted-foreground">
+                  No todos to display...
+                </div>
+              ) : (
+                todos.map(todo => (
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    setDeleteAlertProps={setDeleteAlertProps}
+                    refetchTodos={refetchTodos}
+                  />
+                ))
+              )
+            )
+          )}
+        </div>
+      </div>
     </IonPage>
   );
 }

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-type QueryParams<Args extends any[], T> = {
-  query: (...args: Args) => Promise<T>;
+type QueryParams<Args extends unknown[], T> = {
+  query: ((...args: Args) => Promise<T>) | (() => Promise<T>) | undefined;
   args: Args;
   enabled?: boolean;
 };
 
-export default function useQuery<Args extends any[], T>(queryParams: QueryParams<Args, T>) {
+export default function useQuery<Args extends unknown[], T>(queryParams: QueryParams<Args, T>) {
   const { query, args } = queryParams;
   const enabled = queryParams.enabled !== false;
 
@@ -14,6 +14,8 @@ export default function useQuery<Args extends any[], T>(queryParams: QueryParams
   const [loading, setLoading] = useState<boolean>(false);
 
   async function runQuery() {
+    if (query === undefined) return;
+
     setLoading(true);
 
     const res = await query(...args);

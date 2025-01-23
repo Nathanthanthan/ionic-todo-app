@@ -9,25 +9,29 @@ import {
   IonInput,
   IonPopover,
   IonProgressBar,
-  useIonToast,
+  useIonToast
 } from "@ionic/react";
-import { pencil, save } from "ionicons/icons";
+import { pencil, save, trashBin } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
-import todoService from "../../Services/TodoService";
+import { Link } from "react-router-dom";
+import { TASKS, TODOS } from "../../Utils/Constants/Routes";
+import useTodoService from "../../Utils/Hooks/UseServices/UseTodoService";
 import Todo, { getTodoProgress } from "../../Utils/Types/Todo";
 
 type Props = {
   todo: Todo;
-  onClick: () => void;
-  refetchTodos: () => void;
+  setDeleteAlertProps: (props: { message: string; onConfirm: () => void; }) => void;
+  refetchTodos: () => Promise<void>;
 };
 
-export default function TodoCard({ todo, onClick, refetchTodos }: Props) {
+export default function TodoCard({ todo, setDeleteAlertProps, refetchTodos }: Props) {
   const progress = getTodoProgress(todo);
-  const todoName = todo.name;
+  const { id: todoId, name: todoName } = todo;
 
   const inputRef = useRef<HTMLIonInputElement>(null);
   const [showToast] = useIonToast();
+
+  const todoService = useTodoService();
 
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
   const [updatedName, setUpdatedName] = useState<string>(todoName);
@@ -41,79 +45,124 @@ export default function TodoCard({ todo, onClick, refetchTodos }: Props) {
   }, [popoverOpen]);
 
   async function updateName() {
-    if (updatedName === "" || updatedName === todoName) return;
+    if (updatedName === "" || updatedName === todoName || todoService === undefined) return;
 
-    const res = await todoService.update(todo.id, { name: updatedName });
+    const res = await todoService.update(todoId, { name: updatedName });
 
-    if (!res) return;
+    if (!res) {
+      showToast({
+        message: "Error: failed to update todo",
+        color: "danger",
+        duration: 2000,
+      });
+
+      return;
+    }
 
     showToast({
       message: `Todo updated successfully: ${todoName} -> ${updatedName}`,
-      duration: 2000,
       color: "success",
+      duration: 2000,
     });
 
     setPopoverOpen(false);
     refetchTodos();
   }
 
+  async function deleteTodo() {
+    if (todoService === undefined) return;
+
+    const res = await todoService.delete(todoId);
+
+    if (!res) {
+      showToast({
+        message: "Error: failed to delete task",
+        color: "danger",
+        duration: 2000,
+      });
+
+      return;
+    }
+
+    showToast({
+      message: `${todoName} deleted successfully`,
+      color: "success",
+      duration: 2000,
+    });
+
+    refetchTodos();
+  }
+
   return (
-    <button
-      key={todo.id}
-      className="text-left w-full m-1.5"
-      onClick={onClick}
-    >
+    <Link to={`${TODOS}/${todoId}${TASKS}`}>
       <IonCard className="m-0">
         <IonCardHeader className="py-2">
-          <IonCardTitle
-            id={`todoName[${todo.id}]`}
-            className="flex items-center gap-4 w-fit cursor-default"
-            onClick={e => {
-              e.stopPropagation();
-              setPopoverOpen(true);
-            }}
-          >
-            {todoName}
+          <IonCardTitle className="flex justify-between">
+            <div
+              id={`todoTitle[${todoId}]`}
+              className="inline-flex items-center gap-4 w-fit cursor-default"
+              onClick={e => {
+                e.preventDefault();
+                setPopoverOpen(true);
+              }}
+            >
+              {todoName}
+
+              <IonButton
+                disabled={popoverOpen}
+                size="small"
+                onClick={() => setPopoverOpen(true)}
+              >
+                <IonIcon icon={pencil} />
+              </IonButton>
+
+              <IonPopover
+                trigger={`todoTitle[${todoId}]`}
+                isOpen={popoverOpen}
+                className="no-backdrop"
+                onIonPopoverDidPresent={() => inputRef.current !== null && inputRef.current.setFocus()}
+                onIonPopoverDidDismiss={() => setPopoverOpen(false)}
+              >
+                <IonContent class="ion-padding">
+                  <div className="flex items-center gap-2">
+                    <IonInput
+                      type="text"
+                      ref={inputRef}
+
+                      placeholder="Name..."
+                      className="discreet"
+
+                      value={updatedName}
+                      onIonInput={e => typeof e.target.value === "string" && setUpdatedName(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && updateName()}
+                    />
+
+                    <IonButton
+                      disabled={updatedName === "" || updatedName === todoName}
+                      size="small"
+                      onClick={updateName}
+                    >
+                      <IonIcon icon={save} />
+                    </IonButton>
+                  </div>
+                </IonContent>
+              </IonPopover>
+            </div>
 
             <IonButton
-              disabled={popoverOpen}
               size="small"
-              onClick={() => setPopoverOpen(true)}
+              color="danger"
+              onClick={e => {
+                e.preventDefault();
+
+                setDeleteAlertProps({
+                  message: `Are you sure you want to <strong>delete</strong> ${todoName}?`,
+                  onConfirm: deleteTodo,
+                });
+              }}
             >
-              <IonIcon icon={pencil} />
+              <IonIcon icon={trashBin} />
             </IonButton>
-
-            <IonPopover
-              trigger={`todoName[${todo.id}]`}
-              isOpen={popoverOpen}
-              className="no-backdrop"
-              onIonPopoverDidPresent={() => inputRef.current !== null && inputRef.current.setFocus()}
-              onIonPopoverDidDismiss={() => setPopoverOpen(false)}
-            >
-              <IonContent class="ion-padding">
-                <div className="flex items-center gap-2">
-                  <IonInput
-                    type="text"
-                    ref={inputRef}
-
-                    placeholder="Name..."
-                    className="discreet"
-
-                    value={updatedName}
-                    onIonInput={e => typeof e.target.value === "string" && setUpdatedName(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && updateName()}
-                  />
-
-                  <IonButton
-                    disabled={updatedName === "" || updatedName === todoName}
-                    size="small"
-                    onClick={updateName}
-                  >
-                    <IonIcon icon={save} />
-                  </IonButton>
-                </div>
-              </IonContent>
-            </IonPopover>
           </IonCardTitle>
         </IonCardHeader>
 
@@ -129,12 +178,12 @@ export default function TodoCard({ todo, onClick, refetchTodos }: Props) {
               <div>
                 <IonProgressBar value={progress / 100} />
 
-                {progress}%
+                {progress.toFixed(0)}%
               </div>
             </>
           )}
         </IonCardContent>
       </IonCard>
-    </button>
+    </Link>
   );
 }

@@ -41,8 +41,8 @@ export default function SignUp() {
 
       showToast({
         message: "Successfully signed up",
-        duration: 2000,
         color: "success",
+        duration: 2000,
       });
 
       history.push(TODOS);
@@ -51,8 +51,8 @@ export default function SignUp() {
 
       showToast({
         message: "Error: failed to sign up",
-        duration: 2000,
         color: "danger",
+        duration: 2000,
       });
     }
   }

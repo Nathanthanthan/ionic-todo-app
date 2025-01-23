@@ -7,7 +7,6 @@ import { LOGIN, SIGN_UP, TASKS, TODOS } from "./Utils/Constants/Routes";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import TaskDetails from "./components/TaskList/TaskDetails";
 import TaskList from "./components/TaskList/TaskList";
 import Todos from "./components/Todos/Todos";
 
@@ -42,11 +41,6 @@ export default function Routing() {
         {/* Task list */}
         <ProtectedRoute exact path={`${TODOS}/:todoId${TASKS}`}>
           <TaskList />
-        </ProtectedRoute>
-
-        {/* Task details */}
-        <ProtectedRoute exact path={`${TODOS}/:todoId${TASKS}/:taskId`}>
-          <TaskDetails />
         </ProtectedRoute>
 
         {/* Fallback route */}
