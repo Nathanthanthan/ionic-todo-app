@@ -1,6 +1,7 @@
 import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 // axios.defaults.baseURL = process.env.API_URL;
 axios.defaults.baseURL = "https://tasklist-b5266-default-rtdb.europe-west1.firebasedatabase.app";
@@ -16,6 +17,7 @@ const fbConfig = {
 };
 
 const fbApp = initializeApp(fbConfig);
+export const fbDb = getDatabase(fbApp);
 export const fbAuth = getAuth(fbApp);
 
 // export const fbSecret = process.env.FIREBASE_SECRET;
