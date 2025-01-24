@@ -287,11 +287,7 @@ export default function TodoCard({
               <IonIcon icon={image} />
             </IonButton>
           ) : (
-            <IonImg
-              id={`todoPicture[${todoId}]`}
-              src={todo.picture}
-              alt={`Todo "${todo.name}" picture`}
-              className="max-w-32"
+            <button
               onClick={() => setPicPopoverState({
                 content: (
                   <>
@@ -313,7 +309,14 @@ export default function TodoCard({
                 ),
                 className: "narrow",
               })}
-            />
+            >
+              <IonImg
+                id={`todoPicture[${todoId}]`}
+                src={todo.picture}
+                alt={`Todo "${todo.name}" picture`}
+                className="size-20"
+              />
+            </button>
           )}
 
           <IonPopover
