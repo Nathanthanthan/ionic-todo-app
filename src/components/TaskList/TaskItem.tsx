@@ -48,6 +48,8 @@ export default function TaskItem({ todoId, task, refetchTodos, refetchTodo, refe
       return;
     }
 
+    refetchTasks();
+
     showToast({
       message: `Task updated successfully: ${taskName} -> ${updatedName}`,
       color: "success",
