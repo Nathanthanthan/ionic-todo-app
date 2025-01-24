@@ -3,6 +3,7 @@ import Task from "./Task";
 type Todo = {
   id: string;
   name: string;
+  picture?: string;
 
   tasks: Task[];
 };

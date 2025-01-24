@@ -1,5 +1,6 @@
 import axios from "axios";
-import { fbSecret } from "../Config/firebase";
+import { ref, remove } from "firebase/database";
+import { fbDb, fbSecret } from "../Config/firebase";
 import { TASKS_ENDPOINT, TODOS_ENDPOINT } from "../Utils/Constants/Endpoints";
 import Todo from "../Utils/Types/Todo";
 import TaskService from "./TaskService";
@@ -38,6 +39,18 @@ export default class TodoService {
       return true;
     } catch (err) {
       console.error("Error: failed to update todo", err);
+    }
+
+    return false;
+  };
+
+  deletePicture = async (id: string): Promise<boolean> => {
+    try {
+      await remove(ref(fbDb, `${this.urlTrunk}/${id}/picture`));
+
+      return true;
+    } catch (err) {
+      console.error("Error: failed to remove picture from todo", err);
     }
 
     return false;

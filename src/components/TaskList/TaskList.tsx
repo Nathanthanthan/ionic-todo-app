@@ -56,8 +56,9 @@ export default function TaskList({ match }: RouteComponentProps<{ todoId: string
     const res = await taskService.create({ name });
 
     if (res) {
-      refetchTasks();
+      refetchTodos();
       refetchTodo();
+      refetchTasks();
     } else {
       showToast({
         message: "Error: failed to create task",

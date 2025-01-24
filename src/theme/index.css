@@ -96,6 +96,18 @@ ion-popover.no-backdrop {
   --backdrop-opacity: 0 !important;
 }
 
+ion-popover.wide {
+  --width: 265px !important;
+}
+
+ion-popover.narrow {
+  --width: 130px !important;
+}
+
+ion-popover.narrow-to-wide {
+  transform: translateX(-135px);
+}
+
 @media(min-width: 768px) {
   ion-modal.auto-height {
     --height: auto;

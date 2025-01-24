@@ -140,7 +140,7 @@ export default function TaskItem({ todoId, task, refetchTodos, refetchTodo, refe
         onIonPopoverDidDismiss={() => setPopoverOpen(false)}
       >
         <IonContent class="ion-padding">
-          <div className="flex items-center gap-2">
+          <div className="flex justify-center items-center gap-2">
             <IonInput
               type="text"
               ref={inputRef}

@@ -15,6 +15,7 @@ import { add, logOut as logOutIcon, trashBin } from "ionicons/icons";
 import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
 import { TodoContext } from "../../Providers/TodoProvider";
+import useCamera from "../../Utils/Hooks/UseCamera";
 import { getTodoProgress } from "../../Utils/Types/Todo";
 import TodoCard from "./TodoCard";
 import TodoCreationModal from "./TodoCreationModal";
@@ -23,6 +24,7 @@ export default function Todos() {
   const { currentUser, logOut } = useContext(AuthContext);
   const { todoService, todos, todosLoading, refetchTodos } = useContext(TodoContext);
   const [showToast] = useIonToast();
+  const { takePicture, selectFromGallery } = useCamera();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteAlertProps, setDeleteAlertProps] = useState<{ message: string; onConfirm: () => void; }>();
@@ -204,6 +206,9 @@ export default function Todos() {
                   <TodoCard
                     key={todo.id}
                     todo={todo}
+                    todoService={todoService}
+                    takePicture={takePicture}
+                    selectFromGallery={selectFromGallery}
                     setDeleteAlertProps={setDeleteAlertProps}
                     refetchTodos={refetchTodos}
                   />
