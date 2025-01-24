@@ -14,20 +14,14 @@ import {
 import { add, logOut as logOutIcon, trashBin } from "ionicons/icons";
 import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
-import Todo, { getTodoProgress } from "../../Utils/Types/Todo";
+import { TodoContext } from "../../Providers/TodoProvider";
+import { getTodoProgress } from "../../Utils/Types/Todo";
 import TodoCard from "./TodoCard";
 import TodoCreationModal from "./TodoCreationModal";
-import TodoService from "../../Services/TodoService";
 
-type Props = Readonly<{
-  todos: Todo[] | null | undefined;
-  todoService: TodoService | undefined;
-  todosLoading: boolean;
-  refetchTodos: () => Promise<void>;
-}>;
-
-export default function Todos({ todos, todoService, todosLoading, refetchTodos }: Props) {
+export default function Todos() {
   const { currentUser, logOut } = useContext(AuthContext);
+  const { todoService, todos, todosLoading, refetchTodos } = useContext(TodoContext);
   const [showToast] = useIonToast();
 
   const [isModalOpen, setIsModalOpen] = useState(false);

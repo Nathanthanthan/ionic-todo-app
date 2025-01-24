@@ -14,25 +14,23 @@ import {
 } from "@ionic/react";
 import { add, logOut as logOutIcon } from "ionicons/icons";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { AuthContext } from "../../Providers/AuthProvider";
+import { TodoContext } from "../../Providers/TodoProvider";
 import useQuery from "../../Utils/Hooks/UseQuery";
 import useTaskService from "../../Utils/Hooks/UseServices/UseTaskService";
-import useTodoService from "../../Utils/Hooks/UseServices/UseTodoService";
 import { getTodoProgress } from "../../Utils/Types/Todo";
 import TaskCreationModal from "./TaskCreationModal";
 import TaskItem from "./TaskItem";
 
-type Props = Readonly<{
-  refetchTodos: () => Promise<void>;
-}>;
+export default function TaskList({ match }: RouteComponentProps<{ todoId: string; }>) {
+  const { todoId } = match.params;
 
-export default function TaskList({ refetchTodos }: Props) {
-  const { todoId } = useParams<{ todoId?: string }>();
-  const { currentUser, logOut } = useContext(AuthContext);
   const [showToast] = useIonToast();
 
-  const todoService = useTodoService();
+  const { todoService, refetchTodos } = useContext(TodoContext);
+  const { currentUser, logOut } = useContext(AuthContext);
+
   const taskService = useTaskService(todoId);
 
   const { data: todo, loading: _, reRunQuery: refetchTodo } = useQuery({

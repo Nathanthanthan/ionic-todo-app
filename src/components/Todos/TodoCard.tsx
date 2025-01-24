@@ -14,7 +14,7 @@ import {
 import { pencil, save, trashBin } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { TASKS, TODOS } from "../../Utils/Constants/Routes";
+import { TODOS } from "../../Utils/Constants/Routes";
 import useTodoService from "../../Utils/Hooks/UseServices/UseTodoService";
 import Todo, { getTodoProgress } from "../../Utils/Types/Todo";
 
@@ -94,7 +94,7 @@ export default function TodoCard({ todo, setDeleteAlertProps, refetchTodos }: Pr
   }
 
   return (
-    <Link to={`${TODOS}/${todoId}${TASKS}`}>
+    <Link to={`${TODOS}/${todoId}`}>
       <IonCard className="m-0">
         <IonCardHeader className="py-2">
           <IonCardTitle className="flex justify-between">
