@@ -10,7 +10,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useHistory } from "react-router-dom";
 import { z } from "zod";
 import { fbAuth } from "../Config/firebase";
-import { SIGN_UP, TASKS } from "../Utils/Constants/Routes";
+import { SIGN_UP, TODOS } from "../Utils/Constants/Routes";
 import useForm from "../Utils/Hooks/UseForm";
 
 const formSchema = z.object({
@@ -40,7 +40,7 @@ export default function Login() {
         duration: 2000,
       });
 
-      history.push(TASKS);
+      history.push(TODOS);
     } catch (err) {
       console.error("Error: failed to log in", err);
 

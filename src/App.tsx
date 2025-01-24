@@ -38,6 +38,8 @@ import "./theme/variables.css";
 
 // Authentification
 import AuthProvider from "./Providers/AuthProvider";
+// Global todo management
+import TodoProvider from "./Providers/TodoProvider";
 // Routes
 import Routing from "./Routing";
 
@@ -48,9 +50,11 @@ setupIonicReact({
 export default function App() {
   return (
     <AuthProvider>
-      <IonApp>
-        <Routing />
-      </IonApp>
+      <TodoProvider>
+        <IonApp>
+          <Routing />
+        </IonApp>
+      </TodoProvider>
     </AuthProvider>
   );
 }
