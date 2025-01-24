@@ -7,9 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        "muted": "hsl(var(--muted))",
-        "muted-foreground": "hsl(var(--muted-foreground))",
-        "border": "hsl(var(--border))",
+        "muted": "var(--muted)",
+        "muted-foreground": "var(--muted-foreground)",
+        "border": "var(--border)",
       },
     },
   },
