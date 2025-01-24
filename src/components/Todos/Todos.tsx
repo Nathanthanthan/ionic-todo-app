@@ -134,15 +134,16 @@ export default function Todos() {
       />
 
       <div className="size-full p-4">
-        <div className={`flex pb-2 ${currentUser ? "justify-between" : "justify-end"}`}>
+        <div className={`flex flex-col md:flex-row pb-2 ${currentUser ? "justify-between" : "justify-end"}`}>
           {currentUser && (
-            <h1>{currentUser.displayName}'s todo list</h1>
+            <h1 className="truncate">{currentUser.displayName}'s todo list</h1>
           )}
 
           <div className="inline-flex gap-2">
             <IonButton
               disabled={!completedTodosIds.length}
               color="danger"
+              className="w-full md:w-fit"
               onClick={() => setDeleteAlertProps({
                 message: "Are you sure you want to <strong>delete</strong> all completed todos?",
                 onConfirm: deleteAllCompleted,
@@ -158,7 +159,10 @@ export default function Todos() {
               </span>
             </IonButton>
 
-            <IonButton onClick={() => setIsModalOpen(true)}>
+            <IonButton
+              className="w-full md:w-fit"
+              onClick={() => setIsModalOpen(true)}
+            >
               <span className="flex items-center gap-1">
                 <IonIcon
                   icon={add}

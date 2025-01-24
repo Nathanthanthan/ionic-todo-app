@@ -1,6 +1,5 @@
 import {
   IonButton,
-  IonContent,
   IonHeader,
   IonInput,
   IonModal,
@@ -33,6 +32,7 @@ export default function TaskCreationModal({ isOpen, setIsOpen, onSubmit }: Props
   return (
     <IonModal
       isOpen={isOpen}
+      className="auto-height"
       onIonModalDidDismiss={onClose}
       onDidPresent={() => setDidPresent(true)}
     >
@@ -42,13 +42,13 @@ export default function TaskCreationModal({ isOpen, setIsOpen, onSubmit }: Props
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
+      <div className="h-full p-4 pt-6">
         <TaskCreationModalContent
           didPresent={didPresent}
           setIsOpen={setIsOpen}
           onSubmit={onSubmit}
         />
-      </IonContent>
+      </div>
     </IonModal>
   );
 }

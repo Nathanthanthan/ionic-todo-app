@@ -95,3 +95,9 @@ ion-input.discreet {
 ion-popover.no-backdrop {
   --backdrop-opacity: 0 !important;
 }
+
+@media(min-width: 768px) {
+  ion-modal.auto-height {
+    --height: auto;
+  }
+}
